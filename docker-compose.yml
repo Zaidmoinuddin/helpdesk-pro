@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  server:
+    build: ./server
+    working_dir: /app
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./server:/app
+      - ./server/data:/app/data
+
+  # Postgres is optional for this MVP; FAQs are stored in JSON for simplicity.
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: helpdesk
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: helpdesk
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
